@@ -1,1 +1,3 @@
-
+contracts_dir: contracts
+tests_dir: tests
+default_network: localnet

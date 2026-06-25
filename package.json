@@ -1,1 +1,14 @@
-
+{
+  "name": "verity",
+  "version": "1.0.0",
+  "description": "Decentralized source intelligence protocol on GenLayer",
+  "scripts": {
+    "deploy:bradbury": "node deploy/deploy.js",
+    "preflight": "node deploy/preflight.js"
+  },
+  "dependencies": {
+    "genlayer-js": "^1.1.7",
+    "dotenv": "^16.0.0"
+  },
+  "type": "module"
+}
