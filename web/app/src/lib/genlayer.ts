@@ -1,20 +1,11 @@
 // @ts-nocheck
-import { createClient, simulator } from 'genlayer-js'
+import { createClient } from 'genlayer-js'
+import { testnetBradbury } from 'genlayer-js/chains'
 
 export const CONTRACT_ADDRESS = '0xd1Dbf820eD19E7371EA72aB57a159263391A543C'
 export const BRADBURY_EXPLORER = 'https://explorer-bradbury.genlayer.com'
 
-const bradbury = {
-  ...simulator,
-  id: 4221,
-  name: 'GenLayer Bradbury',
-  rpcUrls: {
-    default: { http: ['https://rpc.bradbury.genlayer.com'] },
-    public:  { http: ['https://rpc.bradbury.genlayer.com'] },
-  },
-}
-
-export const client = createClient({ chain: bradbury })
+export const client = createClient({ chain: testnetBradbury })
 
 export interface SourceRecord {
   source_id:         string
