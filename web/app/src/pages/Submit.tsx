@@ -6,21 +6,17 @@ import { submitSource, BRADBURY_EXPLORER } from '../lib/genlayer'
 type Step = 'form' | 'submitting' | 'success' | 'error'
 
 export default function Submit() {
-  const [url, setUrl]         = useState('')
-  const [domain, setDomain]   = useState('')
-  const [address, setAddress] = useState('')
-  const [step, setStep]       = useState<Step>('form')
-  const [txHash, setTxHash]   = useState('')
-  const [errMsg, setErrMsg]   = useState('')
+  const [url, setUrl]       = useState('')
+  const [domain, setDomain] = useState('')
+  const [step, setStep]     = useState<Step>('form')
+  const [txHash, setTxHash] = useState('')
+  const [errMsg, setErrMsg] = useState('')
 
   const isValidUrl = (s: string) => {
     try { new URL(s); return true } catch { return false }
   }
 
-  const canSubmit =
-    isValidUrl(url) &&
-    domain.trim().length > 0 &&
-    address.trim().startsWith('0x')
+  const canSubmit = isValidUrl(url) && domain.trim().length > 0
 
   const autoDomain = (raw: string) => {
     try {
@@ -34,7 +30,7 @@ export default function Submit() {
     setStep('submitting')
     setErrMsg('')
     try {
-      const hash = await submitSource(url.trim(), domain.trim(), address.trim())
+      const hash = await submitSource(url.trim(), domain.trim())
       setTxHash(hash)
       setStep('success')
     } catch (e: any) {
@@ -46,7 +42,7 @@ export default function Submit() {
   }
 
   const reset = () => {
-    setUrl(''); setDomain(''); setAddress('')
+    setUrl(''); setDomain('')
     setTxHash(''); setErrMsg(''); setStep('form')
   }
 
@@ -111,44 +107,6 @@ export default function Submit() {
                   <p className="text-xs text-sand-400 mt-1 font-body">Auto-filled from URL — edit if needed</p>
                 </div>
 
-                {/* Wallet address */}
-                <div>
-                  <label className="block text-xs font-medium text-ink-700 mb-1.5 font-body">
-                    Your Bradbury Address <span className="text-score-low">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
-                    placeholder="0x…"
-                    className="verity-input font-mono"
-                  />
-                  <div className="flex items-start gap-1.5 mt-2">
-                    <Info size={12} className="text-verity-400 flex-shrink-0 mt-0.5" />
-                    <p className="text-xs text-sand-400 font-body">
-                      Connect via{' '}
-                      <a
-                        href="https://studio.genlayer.com"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-verity-500 hover:underline"
-                      >
-                        studio.genlayer.com
-                      </a>{' '}
-                      to get your Bradbury address. Fund it at{' '}
-                      <a
-                        href="https://faucet.genlayer.com"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-verity-500 hover:underline"
-                      >
-                        faucet.genlayer.com
-                      </a>
-                      .
-                    </p>
-                  </div>
-                </div>
-
                 <button
                   onClick={handleSubmit}
                   disabled={!canSubmit}
@@ -161,13 +119,17 @@ export default function Submit() {
                 </button>
               </div>
 
-              {/* Info note */}
               <div className="mt-4 verity-card p-4 flex items-start gap-3">
                 <Info size={14} className="text-verity-400 flex-shrink-0 mt-0.5" />
                 <p className="text-xs text-sand-500 font-body leading-relaxed">
                   After submission, your transaction enters GenLayer's consensus pipeline
                   (Committing → Accepted → Finalized). Scores appear in the registry once
-                  the transaction is Accepted — typically within a few minutes.
+                  Accepted — typically within a few minutes. Connect your wallet via{' '}
+                  <a href="https://studio.genlayer.com" target="_blank" rel="noopener noreferrer"
+                     className="text-verity-500 hover:underline">studio.genlayer.com</a>
+                  {' '}and fund it at{' '}
+                  <a href="https://faucet.genlayer.com" target="_blank" rel="noopener noreferrer"
+                     className="text-verity-500 hover:underline">faucet.genlayer.com</a>.
                 </p>
               </div>
             </motion.div>
@@ -209,10 +171,9 @@ export default function Submit() {
               <h3 className="font-display font-semibold text-ink-900 text-xl mb-2">Transaction Submitted</h3>
               <p className="text-sm text-sand-400 font-body mb-6 leading-relaxed">
                 Your source is entering GenLayer's consensus pipeline.
-                Validators are fetching and evaluating it now.
-                Scores will appear in the registry once the transaction is Accepted.
+                Validators are evaluating it now. Scores will appear in the
+                registry once the transaction is Accepted.
               </p>
-
               {txHash && (
                 <a
                   href={`${BRADBURY_EXPLORER}/tx/${txHash}`}
@@ -225,7 +186,6 @@ export default function Submit() {
                   <ExternalLink size={13} />
                 </a>
               )}
-
               <button onClick={reset} className="verity-btn-ghost text-sm">
                 Submit Another
               </button>
@@ -247,7 +207,7 @@ export default function Submit() {
               <h3 className="font-display font-semibold text-ink-900 text-xl mb-2">Submission Failed</h3>
               <p className="text-sm text-sand-400 font-body mb-2">{errMsg}</p>
               <p className="text-xs text-sand-400 font-body mb-6">
-                Ensure your address is funded with GEN from{' '}
+                Fund your address at{' '}
                 <a href="https://faucet.genlayer.com" target="_blank" rel="noopener noreferrer"
                    className="text-verity-500 hover:underline">faucet.genlayer.com</a>.
               </p>
