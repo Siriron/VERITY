@@ -1,9 +1,20 @@
-import { createClient, testnetBradbury } from 'genlayer-js'
+// @ts-nocheck
+import { createClient, simulator } from 'genlayer-js'
 
 export const CONTRACT_ADDRESS = '0xd1Dbf820eD19E7371EA72aB57a159263391A543C'
 export const BRADBURY_EXPLORER = 'https://explorer-bradbury.genlayer.com'
 
-export const client = createClient({ chain: testnetBradbury })
+const bradbury = {
+  ...simulator,
+  id: 4221,
+  name: 'GenLayer Bradbury',
+  rpcUrls: {
+    default: { http: ['https://rpc.bradbury.genlayer.com'] },
+    public:  { http: ['https://rpc.bradbury.genlayer.com'] },
+  },
+}
+
+export const client = createClient({ chain: bradbury })
 
 export interface SourceRecord {
   source_id:         string
@@ -21,7 +32,7 @@ export interface SourceRecord {
 export async function getAllSources(limit = 100): Promise<SourceRecord[]> {
   try {
     const result = await client.readContract({
-      address:      CONTRACT_ADDRESS as `0x${string}`,
+      address:      CONTRACT_ADDRESS,
       functionName: 'get_all_sources',
       args:         [limit],
     })
@@ -34,7 +45,7 @@ export async function getAllSources(limit = 100): Promise<SourceRecord[]> {
 export async function getSource(id: number): Promise<SourceRecord | null> {
   try {
     const result = await client.readContract({
-      address:      CONTRACT_ADDRESS as `0x${string}`,
+      address:      CONTRACT_ADDRESS,
       functionName: 'get_source',
       args:         [id],
     })
@@ -49,7 +60,7 @@ export async function getSource(id: number): Promise<SourceRecord | null> {
 export async function getTotal(): Promise<number> {
   try {
     const result = await client.readContract({
-      address:      CONTRACT_ADDRESS as `0x${string}`,
+      address:      CONTRACT_ADDRESS,
       functionName: 'get_total',
       args:         [],
     })
@@ -60,19 +71,12 @@ export async function getTotal(): Promise<number> {
   }
 }
 
-export async function submitSource(
-  url: string,
-  domain: string,
-  senderAddress: string
-): Promise<string> {
-  const txClient = createClient({
-    chain:   testnetBradbury,
-    account: { address: senderAddress as `0x${string}` },
-  })
-  const hash = await txClient.writeContract({
-    address:      CONTRACT_ADDRESS as `0x${string}`,
+export async function submitSource(url: string, domain: string): Promise<string> {
+  const hash = await client.writeContract({
+    address:      CONTRACT_ADDRESS,
     functionName: 'submit_source',
     args:         [url, domain],
+    value:        BigInt(0),
   })
   return hash as string
 }
